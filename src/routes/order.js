@@ -3,7 +3,7 @@ const router = express.Router();
 const OrderProduct = require("../app/controlers/OrderController");
 
 router.delete("/destroy-order", OrderProduct.deleteOrder);
-router.patch("/edit-order", OrderProduct.editOrder);
+router.patch("/edit-order/:id", OrderProduct.editOrder);
 router.post("/create-order", OrderProduct.createOrder);
 router.get("/get-order", OrderProduct.getAllOrder);
 
