@@ -34,19 +34,22 @@ const getAllOrder = async (req, res) => {
     }
 };
 const editOrder = async (req, res) => {
-    try{    
-        console.log('body: ',req.body)
-
+    try {
         const data = req.body
         data.isDelivered = true
-        const change = await order.updateOne({_id: req.params.id}, data)
+        data.deliveredAt = Date()
+
+        const all = await order.find()
+        console.log(all)
+
+        const change = await order.updateOne({ _id: req.params.id }, data)
 
         return res.status(200)
-    }catch(error){
+    } catch (error) {
         return res.status(400).json({ message: error });
     }
 };
-const deleteOrder = async (req, res) => {};
+const deleteOrder = async (req, res) => { };
 
 module.exports = {
     createOrder,
