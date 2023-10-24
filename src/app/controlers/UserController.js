@@ -47,16 +47,18 @@ const SignIn = async (req, res) => {
             return res.status(400).json({ message: "email not found" });
         }
 
-        const checkPassword = await bcrypt.compareSync(req.body.password, getUser.password);
+        const checkPassword = await bcrypt.compare(req.body.password, getUser.password);
         if (!checkPassword) {
             return res.status(400).json({ message: req.body.password });
         }
+
 
         if (getUser && checkPassword) {
             const accToken = await accesToken({
                 id: getUser._id,
                 isAdmin: getUser.isAdmin,
             });
+
             const refreshTok = await refreshToken({
                 id: getUser._id,
                 isAdmin: getUser.isAdmin,
@@ -100,12 +102,13 @@ const getUser = async (req, res) => {
 
 const moveUserToTrash = async (req, res) => {
     try {
-        const user = await User.delete({ _id: req.params.id });
-        const resultUser = res.status(200).json({ message: "successful" });
+        await User.delete({ _id: req.params.id });
+        res.status(200).json({ message: "successfull" });
     } catch (error) {
         return res.status(400).json({ message: error });
     }
 };
+
 module.exports = {
     createUser,
     SignIn,

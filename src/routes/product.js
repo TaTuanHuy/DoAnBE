@@ -10,6 +10,7 @@ router.post("/create-product", ProductController.createProduct); // tạo produc
 router.get("/get-product/hot", ProductController.getHotProduct); // lấy ra sản phẩm hot
 router.get("/all/product/:ob", ProductController.getObjectProduct); // lấy ra tất cả sản phẩm theo đối tượng
 router.get("/panigated/search", ProductController.PanigatedSearch); // lấy product theo từng page và search
+router.get("/find-by-range", ProductController.findByRange)
 router.get("/:id", ProductController.getProduct); // lấy ra product theo id
 // router.get("/", authMiddleWare, ProductController.getAllProduct); // lấy all products
 router.get("/", ProductController.getAllProduct); // lấy all products
