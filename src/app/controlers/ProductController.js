@@ -105,6 +105,27 @@ const deleteManyProduct = async (req, res) => {
     }
 };
 
+const findByRange = async (req, res) => {
+    try {
+        console.log('Jump hereeeeeee')
+        const check = await Product.find({
+            $and: [
+                {
+                    updatedAt: { $gte: new Date("2023-10-14") }
+                },
+                {
+                    updatedAt: { $lte: new Date("2023-12-31") }
+                }
+            ]
+        })
+        console.log(check)
+        // return check
+        return res.status(200).json({ message: "Success" });
+    } catch (error) {
+        return res.status(400).json({ message: error.message });
+    }
+};
+
 // panigated
 const PanigatedSearch = async (req, res) => {
     try {
@@ -190,4 +211,5 @@ module.exports = {
     getObjectProduct,
     deleteProduct,
     deleteManyProduct,
+    findByRange
 };
