@@ -4,7 +4,7 @@ const escapeStringRegexp = require("escape-string-regexp-node");
 // CRUD
 const createProduct = async (req, res) => {
     try {
-        const { name, price, image, type, size, Ob } = req.body;
+        const { name, price, image, type, size, Ob, quantity } = req.body;
         if (
             !name ||
             !price ||
@@ -13,7 +13,8 @@ const createProduct = async (req, res) => {
             !type ||
             !size ||
             size.lenght < 1 ||
-            !Ob
+            !Ob ||
+            !quantity
         ) {
             return res.status(400).json({ message: "missing something ?" });
         }
@@ -25,6 +26,7 @@ const createProduct = async (req, res) => {
             type,
             size,
             Ob,
+            quantity
         });
         const product = await newProduct.save();
         return res.status(200).json(product);
@@ -76,11 +78,11 @@ const getProduct = async (req, res) => {
 
 const updateProduct = async (req, res) => {
     try {
-        const { name, price, image, type, size, Ob } = req.body;
-        if (!name || !price || !image || image.lenght >= 3 || !type || !size || !Ob) {
+        const { name, price, image, type, size, Ob, quantity } = req.body;
+        if (!name || !price || !image || image.lenght >= 3 || !type || !size || !Ob || !quantity) {
             return res.status(400).json({ message: "missing something ?" });
         }
-        const product = await Product.updateOne({ _id: req.params.id }, req.body);
+        await Product.updateOne({ _id: req.params.id }, req.body);
         return res.status(200).json({ message: "suscces" });
     } catch (error) {
         return res.status(400).json({ message: error });

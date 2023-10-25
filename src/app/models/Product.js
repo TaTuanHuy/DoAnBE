@@ -12,6 +12,7 @@ const Product = new Schema(
         size: { type: Array, required: true },
         Ob: { type: String, required: true },
         sale: { type: Number, required: false, default: 1 },
+        quantity: { type: Number, required: false, },
         slug: { type: String, slug: "name", unique: true }, // tự động thêm slug lấy từ name, unique để check slug ko bị trùng
     },
     {
