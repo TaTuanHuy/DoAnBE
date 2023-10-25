@@ -5,11 +5,12 @@ const createOrder = async (req, res) => {
     try {
         const { orderItems, shippingAddress, paymentMethod, totalPrice, user } = req.body;
         if (!orderItems || !shippingAddress || !paymentMethod || !totalPrice || !user) {
-            return res.status(400).json({ message: "missing someThing ?" });
+            return res.status(400).json({ message: "missing something ?" });
         }
         for (const order of orderItems) {
             const getProduct = await Product.findOne({ _id: order.product });
             getProduct.sale += order.amount;
+            getProduct.quantity -= order.amount
             await getProduct.save();
         }
         const newOrder = await new order({
