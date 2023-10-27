@@ -52,11 +52,22 @@ const editOrder = async (req, res) => {
 };
 const deleteOrder = async (req, res) => {
     try {
-        const check = await order.deleteOne({ _id: req.params.id })
+        const orderItem = await order.findOne({ _id: req.params.id })
+        const productOrders = orderItem.orderItems
+
+        productOrders.map(async (item) => {
+            const findProduct = await Product.findOne({ _id: item.product })
+            findProduct.sale -= item.amount
+            findProduct.quantity += item.amount
+            await Product.updateOne({ _id: findProduct._id }, findProduct)
+        })
+
+        await order.deleteOne({ _id: req.params.id })
         return res.status(200).json({ message: 'successfull' })
     } catch (error) {
         return res.status(400).json({ message: error });
     }
+
 };
 
 const getUserOrder = async (req, res) => {
@@ -70,10 +81,33 @@ const getUserOrder = async (req, res) => {
     }
 }
 
+const findByRange = async (req, res) => {
+    try {
+        const check = await order.find({
+            $and: [
+                {
+
+                    created_at: { $gte: new Date("2023-07-25") }
+                },
+                {
+
+                    created_at: { $lte: new Date("2023-07-27") }
+                }
+            ]
+        })
+        console.log(check)
+        // return check
+        return res.status(200).json(check);
+    } catch (error) {
+        return res.status(400).json({ message: error.message });
+    }
+};
+
 module.exports = {
     createOrder,
     deleteOrder,
     editOrder,
     getAllOrder,
-    getUserOrder
+    getUserOrder,
+    findByRange
 };
