@@ -30,7 +30,7 @@ const order = new Schema({
     paidAt: { type: Date },
     isDelivered: { type: Boolean, default: false },
     deliveredAt: { type: Date },
-});
+}, { timestamps: {} });
 
 order.plugin(mongooseDelete, {
     deletedAt: true,
