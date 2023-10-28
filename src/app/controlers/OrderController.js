@@ -1,3 +1,5 @@
+const dayjs = require('dayjs')
+
 const order = require("../models/OrderProduct");
 const Product = require("../models/Product");
 
@@ -81,22 +83,91 @@ const getUserOrder = async (req, res) => {
     }
 }
 
+const findByDate = async (req, res) => {
+
+    const startToday = new Date(req.body.currentDate)
+    const endToday = new Date(req.body.currentDate)
+
+    const startSecondDate = new Date(req.body.secondDate)
+    const endSecondDate = new Date(req.body.secondDate)
+
+    endToday.setUTCHours(23, 59, 59, 999)
+    endSecondDate.setUTCHours(23, 59, 59, 999)
+
+    const orderToday = await order.find({
+        createdAt: {
+            $gte: startToday,
+            $lt: endToday
+        }
+    })
+
+    const orderSecondDate = await order.find({
+        createdAt: {
+            $gte: startSecondDate,
+            $lt: endSecondDate
+        }
+    })
+
+
+    const quantityToday = await totalQuantity(orderToday)
+
+    const quantitySecondToday = await totalQuantity(orderSecondDate)
+
+    const turnoverToday = await totalTurnover(orderToday)
+
+    const turnoverSecondDate = await totalTurnover(orderSecondDate)
+
+    const percentTotal = turnoverToday / turnoverSecondDate * 100
+    let percentQuantity = quantityToday / quantitySecondToday * 100
+
+    console.log('quantityToday: ', quantityToday)
+    console.log('quantitySecondToday: ', quantitySecondToday)
+
+    console.log('percentQuantity: ', Math.round(percentQuantity))
+    console.log('percentTotal: ', Math.round(percentTotal))
+
+    console.log('turnoverToDay: ', turnoverToday)
+    console.log('turnoverSecondDate: ', turnoverSecondDate)
+
+    return {
+        quantityToday,
+        percentQuantity,
+        turnoverToday,
+        orderToday
+    }
+};
+
+const totalQuantity = async (data) => {
+    const quantity = data.reduce((item, currentValue) => {
+        const resultQuantity = currentValue.orderItems.reduce((item, currentValue) => {
+            return item + currentValue.amount
+        }, 0)
+        return resultQuantity + item
+    }, 0)
+    return quantity
+}
+
+const totalTurnover = async (data) => {
+    const turnOver = data.reduce((item, currentValue) => {
+        return item + currentValue.totalPrice
+    }, 0)
+    return turnOver
+}
+
 const findByRange = async (req, res) => {
     try {
-        const check = await order.find({
-            $and: [
-                {
+        const check = await order.findOne({
+            // $and: [
+            // {
 
-                    created_at: { $gte: new Date("2023-07-25") }
-                },
-                {
+            created_at: { $gte: new Date("2023-07-27") }
+            // },
+            // {
 
-                    created_at: { $lte: new Date("2023-07-27") }
-                }
-            ]
+            //     created_at: { $lte: new Date("2023-07-28") }
+            // }
+            // ]
         })
-        console.log(check)
-        // return check
         return res.status(200).json(check);
     } catch (error) {
         return res.status(400).json({ message: error.message });
@@ -109,5 +180,6 @@ module.exports = {
     editOrder,
     getAllOrder,
     getUserOrder,
-    findByRange
+    findByRange,
+    findByDate
 };
