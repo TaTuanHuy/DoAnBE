@@ -85,29 +85,42 @@ const getUserOrder = async (req, res) => {
 
 const findByDate = async (req, res) => {
 
-    const startToday = new Date(req.body.currentDate)
-    const endToday = new Date(req.body.currentDate)
 
-    const startSecondDate = new Date(req.body.secondDate)
-    const endSecondDate = new Date(req.body.secondDate)
+    const startDate = new Date(req.body.startDate)
+    const endDate = new Date(req.body.startDate)
 
-    endToday.setUTCHours(23, 59, 59, 999)
-    endSecondDate.setUTCHours(23, 59, 59, 999)
+    const compareDate = new Date(req.body.endDate)
+    const endCompareDate = new Date(req.body.endDate)
+
+    endDate.setUTCHours(23, 59, 59, 999)
+    endCompareDate.setUTCHours(23, 59, 59, 999)
 
     const orderToday = await order.find({
         createdAt: {
-            $gte: startToday,
-            $lt: endToday
+            $gte: startDate,
+            $lt: endDate
         }
     })
 
     const orderSecondDate = await order.find({
         createdAt: {
-            $gte: startSecondDate,
-            $lt: endSecondDate
+            $gte: compareDate,
+            $lt: endCompareDate
         }
     })
 
+    console.log('orderToday: ', orderToday)
+    console.log('orderSecondDate: ', orderSecondDate)
+
+    if (orderToday.length === 0) {
+        return res.status(200).json({
+            quantityToday: 0,
+            percentQuantity: 0,
+            percentTotal: 0,
+            turnoverToday: 0,
+            orderToday: []
+        })
+    }
 
     const quantityToday = await totalQuantity(orderToday)
 
@@ -117,8 +130,18 @@ const findByDate = async (req, res) => {
 
     const turnoverSecondDate = await totalTurnover(orderSecondDate)
 
-    const percentTotal = turnoverToday / turnoverSecondDate * 100
-    let percentQuantity = quantityToday / quantitySecondToday * 100
+    if (orderSecondDate.length === 0) {
+        return res.status(200).json({
+            quantityToday,
+            percentQuantity: 100 * 100,
+            percentTotal: 100 * 100,
+            turnoverToday,
+            orderToday
+        })
+    }
+
+    const percentTotal = Math.round(turnoverToday / turnoverSecondDate * 100)
+    let percentQuantity = Math.round(quantityToday / quantitySecondToday * 100)
 
     console.log('quantityToday: ', quantityToday)
     console.log('quantitySecondToday: ', quantitySecondToday)
@@ -129,12 +152,13 @@ const findByDate = async (req, res) => {
     console.log('turnoverToDay: ', turnoverToday)
     console.log('turnoverSecondDate: ', turnoverSecondDate)
 
-    return {
+    return res.status(200).json({
         quantityToday,
         percentQuantity,
+        percentTotal,
         turnoverToday,
         orderToday
-    }
+    })
 };
 
 const totalQuantity = async (data) => {
