@@ -43,7 +43,6 @@ const editOrder = async (req, res) => {
         data.deliveredAt = Date()
 
         const all = await order.find()
-        console.log(all)
 
         const change = await order.updateOne({ _id: req.params.id }, data)
 
@@ -109,8 +108,13 @@ const findByDate = async (req, res) => {
         }
     })
 
-    console.log('orderToday: ', orderToday)
-    console.log('orderSecondDate: ', orderSecondDate)
+    const quantityToday = await totalQuantity(orderToday)
+
+    const quantitySecondDay = await totalQuantity(orderSecondDate)
+
+    const turnoverToday = await totalTurnover(orderToday)
+
+    const turnoverSecondDate = await totalTurnover(orderSecondDate)
 
     if (orderToday.length === 0) {
         return res.status(200).json({
@@ -118,46 +122,44 @@ const findByDate = async (req, res) => {
             percentQuantity: 0,
             percentTotal: 0,
             turnoverToday: 0,
+            quantitySecondDay,
+            turnoverSecondDate: turnoverSecondDate,
             orderToday: []
         })
     }
 
-    const quantityToday = await totalQuantity(orderToday)
-
-    const quantitySecondToday = await totalQuantity(orderSecondDate)
-
-    const turnoverToday = await totalTurnover(orderToday)
-
-    const turnoverSecondDate = await totalTurnover(orderSecondDate)
-
     if (orderSecondDate.length === 0) {
         return res.status(200).json({
             quantityToday,
-            percentQuantity: 100 * 100,
-            percentTotal: 100 * 100,
+            percentQuantity: quantityToday / 1 * 100,
+            percentTotal: turnoverToday / 1 * 100,
             turnoverToday,
-            orderToday
+            quantitySecondDay,
+            orderToday,
+            turnoverSecondDate
         })
     }
 
     const percentTotal = Math.round(turnoverToday / turnoverSecondDate * 100)
-    let percentQuantity = Math.round(quantityToday / quantitySecondToday * 100)
+    let percentQuantity = Math.round(quantityToday / quantitySecondDay * 100)
 
-    console.log('quantityToday: ', quantityToday)
-    console.log('quantitySecondToday: ', quantitySecondToday)
+    // console.log('quantityToday: ', quantityToday)
+    // console.log('quantitySecondDay: ', quantitySecondDay)
 
-    console.log('percentQuantity: ', Math.round(percentQuantity))
-    console.log('percentTotal: ', Math.round(percentTotal))
+    // console.log('percentQuantity: ', Math.round(percentQuantity))
+    // console.log('percentTotal: ', Math.round(percentTotal))
 
-    console.log('turnoverToDay: ', turnoverToday)
-    console.log('turnoverSecondDate: ', turnoverSecondDate)
+    // console.log('turnoverToDay: ', turnoverToday)
+    // console.log('turnoverSecondDate: ', turnoverSecondDate)
 
     return res.status(200).json({
         quantityToday,
         percentQuantity,
         percentTotal,
         turnoverToday,
-        orderToday
+        orderToday,
+        turnoverSecondDate,
+        quantitySecondDay
     })
 };
 
@@ -180,22 +182,31 @@ const totalTurnover = async (data) => {
 
 const findByRange = async (req, res) => {
     try {
-        const check = await order.findOne({
-            // $and: [
-            // {
+        const startDate = new Date(req.body.startDate)
+        const endDate = new Date(req.body.endDate)
 
-            created_at: { $gte: new Date("2023-07-27") }
-            // },
-            // {
+        startDate.setHours(0, 0, 0, 0)
+        endDate.setUTCHours(23, 59, 59, 999)
 
-            //     created_at: { $lte: new Date("2023-07-28") }
-            // }
-            // ]
+        const orders = await order.find({
+            createdAt: {
+                $gte: startDate,
+                $lt: endDate
+            }
         })
-        return res.status(200).json(check);
-    } catch (error) {
-        return res.status(400).json({ message: error.message });
+
+        const orderQuantity = await totalQuantity(orders)
+        const turnOver = await totalTurnover(orders)
+
+        return res.status(200).json({
+            orders,
+            orderQuantity,
+            turnOver
+        })
+    } catch (err) {
+        return res.status(400).json({ message: error });
     }
+
 };
 
 module.exports = {

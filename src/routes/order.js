@@ -6,10 +6,8 @@ const { authMiddleWare, authUserMiddleWare } = require("../app/Middleware/authMi
 router.patch("/edit-order/:id", OrderProduct.editOrder);
 router.post("/create-order", OrderProduct.createOrder);
 router.get("/get-order", OrderProduct.getAllOrder);
-router.get("/find-by-range", OrderProduct.findByRange)
+router.post("/find-by-range", OrderProduct.findByRange)
 router.post("/find-by-date", OrderProduct.findByDate)
 router.delete("/:id", authUserMiddleWare, OrderProduct.deleteOrder);
 router.get('/:id', authUserMiddleWare, OrderProduct.getUserOrder)
-
-
 module.exports = router;
