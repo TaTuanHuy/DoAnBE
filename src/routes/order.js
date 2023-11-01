@@ -8,6 +8,7 @@ router.post("/create-order", OrderProduct.createOrder);
 router.get("/get-order", OrderProduct.getAllOrder);
 router.post("/find-by-range", OrderProduct.findByRange)
 router.post("/find-by-date", OrderProduct.findByDate)
+router.post("/find-by-month", OrderProduct.findByMonth)
 router.delete("/:id", authUserMiddleWare, OrderProduct.deleteOrder);
 router.get('/:id', authUserMiddleWare, OrderProduct.getUserOrder)
 module.exports = router;

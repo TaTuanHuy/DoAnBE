@@ -6,6 +6,7 @@ const Product = require("../models/Product");
 const createOrder = async (req, res) => {
     try {
         const { orderItems, shippingAddress, paymentMethod, totalPrice, user } = req.body;
+
         if (!orderItems || !shippingAddress || !paymentMethod || !totalPrice || !user) {
             return res.status(400).json({ message: "missing something ?" });
         }
@@ -209,6 +210,40 @@ const findByRange = async (req, res) => {
 
 };
 
+const findByMonth = async (req, res) => {
+    try {
+        const date = new Date(req.body.date)
+
+        const lastDayOfMonth = await getLastDayOfMonth(date.getFullYear(), date.getMonth())
+
+        lastDayOfMonth.setUTCHours(23, 59, 59, 999)
+        date.setDate(1)
+        date.setUTCHours(0, 0, 0, 0)
+
+        const orders = await order.find({
+            createdAt: {
+                $gte: date,
+                $lt: lastDayOfMonth
+            }
+        })
+
+        const orderQuantity = await totalQuantity(orders)
+        const turnOver = await totalTurnover(orders)
+
+        return res.status(200).json({
+            orders,
+            orderQuantity,
+            turnOver
+        })
+    } catch (err) {
+        return res.status(400).json({ message: error });
+    }
+};
+
+function getLastDayOfMonth(year, month) {
+    return new Date(year, month + 1, 1);
+}
+
 module.exports = {
     createOrder,
     deleteOrder,
@@ -216,5 +251,6 @@ module.exports = {
     getAllOrder,
     getUserOrder,
     findByRange,
-    findByDate
+    findByDate,
+    findByMonth
 };
