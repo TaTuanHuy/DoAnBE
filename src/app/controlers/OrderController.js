@@ -72,6 +72,16 @@ const deleteOrder = async (req, res) => {
 
 };
 
+const getOneOrder = async (req, res) => {
+    try {
+        const orderItem = await order.findOne({ _id: req.params.id })
+        console.log(orderItem)
+        return res.status(200).json(orderItem)
+    } catch (err) {
+        return res.status(400).json({ message: error });
+    }
+}
+
 const getUserOrder = async (req, res) => {
     try {
         const userOrder = await order.find({
@@ -250,6 +260,7 @@ module.exports = {
     editOrder,
     getAllOrder,
     getUserOrder,
+    getOneOrder,
     findByRange,
     findByDate,
     findByMonth
