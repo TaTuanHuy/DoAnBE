@@ -37,15 +37,23 @@ const getAllOrder = async (req, res) => {
         return res.status(400).json({ message: error });
     }
 };
+
 const editOrder = async (req, res) => {
+    try {
+        await order.updateOne({ _id: req.params.id }, req.body.data)
+        return res.status(200).json({ message: 'Successfully' })
+    } catch (err) {
+        return res.status(400).json({ message: err });
+    }
+}
+
+const isDeliverOrder = async (req, res) => {
     try {
         const data = req.body
         data.isDelivered = true
         data.deliveredAt = Date()
 
-        const all = await order.find()
-
-        const change = await order.updateOne({ _id: req.params.id }, data)
+        await order.updateOne({ _id: req.params.id }, data)
 
         return res.status(200)
     } catch (error) {
@@ -75,7 +83,6 @@ const deleteOrder = async (req, res) => {
 const getOneOrder = async (req, res) => {
     try {
         const orderItem = await order.findOne({ _id: req.params.id })
-        console.log(orderItem)
         return res.status(200).json(orderItem)
     } catch (err) {
         return res.status(400).json({ message: error });
@@ -257,11 +264,12 @@ function getLastDayOfMonth(year, month) {
 module.exports = {
     createOrder,
     deleteOrder,
-    editOrder,
+    isDeliverOrder,
     getAllOrder,
     getUserOrder,
     getOneOrder,
     findByRange,
     findByDate,
-    findByMonth
+    findByMonth,
+    editOrder
 };
