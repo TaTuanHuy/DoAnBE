@@ -67,6 +67,15 @@ const getHotProduct = async (req, res) => {
     }
 };
 
+const getBestSaleProduct = async(req, res) => {
+    try {
+        const product = await Product.find().sort({ sale: -1 })
+        return res.status(200).json(product);
+    } catch (error) {
+        return res.status(400).json({ message: error });
+    }
+}
+
 const getProduct = async (req, res) => {
     try {
         const productItem = await Product.findOne({ _id: req.params.id });
@@ -213,5 +222,6 @@ module.exports = {
     getObjectProduct,
     deleteProduct,
     deleteManyProduct,
-    findByRange
+    findByRange,
+    getBestSaleProduct
 };

@@ -246,7 +246,7 @@ const findByMonth = async (req, res) => {
             turnOver
         })
     } catch (err) {
-        return res.status(400).json({ message: error });
+        return res.status(400).json({ message: err });
     }
 };
 

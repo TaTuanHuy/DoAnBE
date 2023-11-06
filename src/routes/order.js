@@ -11,5 +11,5 @@ router.post("/find-by-date", OrderProduct.findByDate)
 router.post("/find-by-month", OrderProduct.findByMonth)
 router.get('/user/:id', authUserMiddleWare, OrderProduct.getUserOrder)
 router.get('/:id', authUserMiddleWare, OrderProduct.getOneOrder)
-router.delete("/:id", authUserMiddleWare, OrderProduct.deleteOrder);
+router.delete("/:id", OrderProduct.deleteOrder);
 module.exports = router;

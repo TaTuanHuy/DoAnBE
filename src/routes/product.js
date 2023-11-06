@@ -8,6 +8,7 @@ router.delete("/delete-product/:id", ProductController.deleteProduct); // xóa s
 router.patch("/update-product/:id", ProductController.updateProduct); // cập nhật product
 router.post("/create-product", ProductController.createProduct); // tạo product
 router.get("/get-product/hot", ProductController.getHotProduct); // lấy ra sản phẩm hot
+router.get("/best-sale", ProductController.getBestSaleProduct)
 router.get("/all/product/:ob", ProductController.getObjectProduct); // lấy ra tất cả sản phẩm theo đối tượng
 router.get("/panigated/search", ProductController.PanigatedSearch); // lấy product theo từng page và search
 router.get("/find-by-range", ProductController.findByRange)
