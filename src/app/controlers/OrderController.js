@@ -247,16 +247,56 @@ const findByMonth = async (req, res) => {
         const orderQuantity = await totalQuantity(orders)
         const turnOver = await totalTurnover(orders)
 
+        const productsBestSale = await findProductBestSeller(orders)
+
         return res.status(200).json({
             orders,
             orderQuantity,
-            turnOver
+            turnOver,
+            productsBestSale    
         })
     } catch (err) {
         return res.status(400).json({ message: err });
     }
 };
 
+function findProductBestSeller(orders){
+    const allOrderItem = []
+    
+    orders.forEach((item) => {
+        const orderItems = JSON.parse(JSON.stringify(item.orderItems))
+
+        orderItems.forEach(e => {
+            delete e._id
+            allOrderItem.push(e)
+        })
+        // allOrderItem.push(...item.orderItems)
+    })
+
+    // console.log('allOrderItem: ',allOrderItem)
+    
+    const group = {};
+    allOrderItem.forEach(prod => {
+    const o = (group[prod.product] = group[prod.product] || {
+        ...prod,
+        amount: 0,
+    });
+
+    o.amount += prod.amount;
+
+    });
+
+    const res = Object.values(group);
+
+    res.sort((a, b) => {
+        return b.amount - a.amount
+    })
+
+    console.log('res: ', res)
+
+    return res;
+
+}
 function getLastDayOfMonth(year, month) {
     return new Date(year, month + 1, 1);
 }
