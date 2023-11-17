@@ -149,8 +149,8 @@ const findByDate = async (req, res) => {
     if (orderSecondDate.length === 0) {
         return res.status(200).json({
             quantityToday,
-            percentQuantity: quantityToday / 1 * 100,
-            percentTotal: turnoverToday / 1 * 100,
+            percentQuantity: 100,
+            percentTotal: 100,
             turnoverToday,
             quantitySecondDay,
             orderToday,
@@ -291,8 +291,6 @@ function findProductBestSeller(orders){
     res.sort((a, b) => {
         return b.amount - a.amount
     })
-
-    console.log('res: ', res)
 
     return res;
 
