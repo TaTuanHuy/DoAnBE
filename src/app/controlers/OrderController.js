@@ -55,7 +55,7 @@ const isDeliverOrder = async (req, res) => {
 
         await order.updateOne({ _id: req.params.id }, data)
 
-        return res.status(200)
+        return res.status(200).json({ message: 'succesfull'})
     } catch (error) {
         return res.status(400).json({ message: error });
     }
