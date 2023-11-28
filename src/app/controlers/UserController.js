@@ -83,12 +83,23 @@ const UpdateUser = async (req, res) => {
 
 const updatePassWord = async (req, res) => {
     try {
-        const getUser = await User.findOne({ email: req.body.email });
+        const getUser = await User.findOne({ _id: req.params.id });
         const checkMatchOldPassWord = await bcrypt.compare(req.body.old_password, getUser.password);
         if (!checkMatchOldPassWord) {
-            return res.status(403).json({ message: "Old password not match! Please try again!" });
+            return res.status(403).json(
+            { 
+                status: 403 ,
+                message: "Old password not match! Please try again!" 
+            });
         }
-        const updateUser = await User.updateOne({ _id: req.params.id }, req.body.new_password);
+        const salt = bcrypt.genSaltSync(10);
+        const hash = bcrypt.hashSync(req.body.new_password, salt);
+
+        const updateUser = await User.updateOne({ _id: req.params.id }, {
+            password: hash,
+            checkPassword: hash
+        });
+
         return res.status(200).json({ message: "succesfull", updateUser });
     } catch (error) {
         return res.status(400).json({ message: error });
