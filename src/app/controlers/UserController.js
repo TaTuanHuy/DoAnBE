@@ -1,5 +1,5 @@
 const bcrypt = require("bcrypt");
-var jwt = require("jsonwebtoken");
+let jwt = require("jsonwebtoken");
 
 const User = require("../models/userDataBase");
 const { accesToken, refreshToken } = require("../../config/service/accesToken");
@@ -7,25 +7,21 @@ const { accesToken, refreshToken } = require("../../config/service/accesToken");
 const createUser = async (req, res) => {
     try {
         const { name, email, password, checkpassword, phone } = req.body;
-        var re = /\S+@\S+\.\S+/;
+        let re = /\S+@\S+\.\S+/;
         let isEmail = re.test(email);
-        // const allUser = await User.findOne({ email: req.body.email });
         if (!name || !email || !password || !checkpassword || !phone) {
             return res.status(400).json({ message: "Error, Something wrong" });
         }
         if (password !== checkpassword) {
             return res.status(400).json({ message: "Your password is not correct" });
         }
-        // if (allUser) {
-        //     return res.status(400).json("email error");
-        // }
         if (!isEmail) {
             return res.status(400).json({ message: "Your Email is not correct" });
         }
 
         const salt = bcrypt.genSaltSync(10);
         const hash = bcrypt.hashSync(password, salt);
-        const createUser = await new User({
+        const createUser = new User({
             name,
             email,
             password: hash,
@@ -109,7 +105,7 @@ const updatePassWord = async (req, res) => {
 const getAllUser = async (req, res) => {
     try {
         const allUser = await User.find();
-        const user = await allUser.map((user) => user.toObject());
+        const user = allUser.map((user) => user.toObject());
         return res.status(200).json(user);
     } catch (error) {
         return res.status(400).json({ message: error });

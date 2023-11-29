@@ -10,7 +10,7 @@ async function connect() {
             useUnifiedTopology: true,
         });
 
-        const database = mongoose.connection.db;
+        mongoose.connection.db;
         console.log("connect successfully");
     } catch (error) {
         console.log({

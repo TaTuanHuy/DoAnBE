@@ -161,15 +161,6 @@ const findByDate = async (req, res) => {
     const percentTotal = Math.round(turnoverToday / turnoverSecondDate * 100)
     let percentQuantity = Math.round(quantityToday / quantitySecondDay * 100)
 
-    // console.log('quantityToday: ', quantityToday)
-    // console.log('quantitySecondDay: ', quantitySecondDay)
-
-    // console.log('percentQuantity: ', Math.round(percentQuantity))
-    // console.log('percentTotal: ', Math.round(percentTotal))
-
-    // console.log('turnoverToDay: ', turnoverToday)
-    // console.log('turnoverSecondDate: ', turnoverSecondDate)
-
     return res.status(200).json({
         quantityToday,
         percentQuantity,
@@ -270,10 +261,7 @@ function findProductBestSeller(orders){
             delete e._id
             allOrderItem.push(e)
         })
-        // allOrderItem.push(...item.orderItems)
     })
-
-    // console.log('allOrderItem: ',allOrderItem)
     
     const group = {};
     allOrderItem.forEach(prod => {

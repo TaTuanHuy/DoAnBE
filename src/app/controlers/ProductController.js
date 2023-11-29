@@ -118,7 +118,6 @@ const deleteManyProduct = async (req, res) => {
 
 const findByRange = async (req, res) => {
     try {
-        console.log('Jump hereeeeeee')
         const check = await Product.find({
             $and: [
                 {
@@ -129,8 +128,6 @@ const findByRange = async (req, res) => {
                 }
             ]
         })
-        console.log(check)
-        // return check
         return res.status(200).json({ message: "Success" });
     } catch (error) {
         return res.status(400).json({ message: error.message });
