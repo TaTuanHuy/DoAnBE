@@ -16,13 +16,13 @@ const createOrder = async (req, res) => {
             getProduct.quantity -= order.amount
             await getProduct.save();
         }
-        const newOrder = await new order({
+        const newOrder = new order({
             orderItems,
             shippingAddress,
             paymentMethod,
             totalPrice,
             user,
-        });
+        }) ;
         const orders = await newOrder.save();
         return res.status(200).json(orders);
     } catch (error) {
@@ -65,7 +65,7 @@ const deleteOrder = async (req, res) => {
         const orderItem = await order.findOne({ _id: req.params.id })
         const productOrders = orderItem.orderItems
 
-        productOrders.map(async (item) => {
+        productOrders.forEach(async (item) => {
             const findProduct = await Product.findOne({ _id: item.product })
             findProduct.sale -= item.amount
             findProduct.quantity += item.amount
@@ -222,7 +222,7 @@ const findByMonth = async (req, res) => {
     try {
         const date = new Date(req.body.date)
 
-        const lastDayOfMonth = await getLastDayOfMonth(date.getFullYear(), date.getMonth())
+        const lastDayOfMonth = getLastDayOfMonth(date.getFullYear(), date.getMonth())
 
         lastDayOfMonth.setUTCHours(23, 59, 59, 999)
         date.setDate(1)
@@ -238,7 +238,7 @@ const findByMonth = async (req, res) => {
         const orderQuantity = await totalQuantity(orders)
         const turnOver = await totalTurnover(orders)
 
-        const productsBestSale = await findProductBestSeller(orders)
+        const productsBestSale = findProductBestSeller(orders)
 
         return res.status(200).json({
             orders,
