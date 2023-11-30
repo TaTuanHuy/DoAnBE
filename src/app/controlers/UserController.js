@@ -10,13 +10,31 @@ const createUser = async (req, res) => {
         let re = /\S+@\S+\.\S+/;
         let isEmail = re.test(email);
         if (!name || !email || !password || !checkpassword || !phone) {
-            return res.status(400).json({ message: "Error, Something wrong" });
+            return res.status(400).json({ 
+                status: 400,
+                message: "Error, Something wrong" 
+            });
         }
         if (password !== checkpassword) {
-            return res.status(400).json({ message: "Your password is not correct" });
+            return res.status(400).json({ 
+                status: 400,
+                message: "Your password is not correct" 
+            });
         }
         if (!isEmail) {
-            return res.status(400).json({ message: "Your Email is not correct" });
+            return res.status(400).json({ 
+                status: 400,
+                message: "Your Email is not correct" 
+            });
+        }
+
+        const checkEmailInDB = await User.findOne({ email });
+
+        if(checkEmailInDB){
+            return res.status(400).json({
+                status: 400,
+                message: "Your email already exists" 
+            });
         }
 
         const salt = bcrypt.genSaltSync(10);
@@ -29,7 +47,10 @@ const createUser = async (req, res) => {
             phoneNumber: phone,
         });
         const user = await createUser.save();
-        return res.status(200).json(user);
+        return res.status(200).json({
+            status: 200,
+            user
+        });
     } catch (e) {
         return res.status(400).json({ message: e });
     }
