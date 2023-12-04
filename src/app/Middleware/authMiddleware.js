@@ -65,7 +65,6 @@ const authUserMiddleWare = (req, res, next) => {
 };
 
 const refreshToken = (req, res) => {
-    console.log(req.headers.refresh);
     const token = req.headers.refresh;
     if (!token) {
         return res.status(400).json("no token");

@@ -19,7 +19,7 @@ const createProduct = async (req, res) => {
             return res.status(400).json({ message: "missing something ?" });
         }
 
-        const newProduct = await new Product({
+        const newProduct = new Product({
             name,
             price,
             image,
@@ -44,7 +44,6 @@ const getAllProduct = async (req, res) => {
             .limit(10)
             .skip(pageIndex * 10);
         const totalPage = Math.ceil(countProducts / 10);
-        // const product = Products.map((product) => product.toObject());
         return res.status(200).json({ page, countProducts, totalPage, Products });
     } catch (error) {
         return res.status(400).json({ message: error });
@@ -100,7 +99,7 @@ const updateProduct = async (req, res) => {
 
 const deleteProduct = async (req, res) => {
     try {
-        const product = await Product.delete({ _id: req.params.id });
+        await Product.delete({ _id: req.params.id });
         return res.status(200).json({ message: "suscces" });
     } catch (error) {
         return res.status(400).json({ message: error });
@@ -118,8 +117,7 @@ const deleteManyProduct = async (req, res) => {
 
 const findByRange = async (req, res) => {
     try {
-        console.log('Jump hereeeeeee')
-        const check = await Product.find({
+        await Product.find({
             $and: [
                 {
                     updatedAt: { $gte: new Date("2023-10-14") }
@@ -129,8 +127,6 @@ const findByRange = async (req, res) => {
                 }
             ]
         })
-        console.log(check)
-        // return check
         return res.status(200).json({ message: "Success" });
     } catch (error) {
         return res.status(400).json({ message: error.message });
@@ -150,8 +146,6 @@ const PanigatedSearch = async (req, res) => {
             .skip(pageIndex * limit);
         const pages = Number(pageIndex + 1);
         const totalPage = Math.ceil(productLength / limit);
-
-        // const product = Products.map((product) => product.toObject());
         return res.status(200).json({ productLength, pages, totalPage, Products });
     } catch (error) {
         return res.status(400).json({ message: error });
