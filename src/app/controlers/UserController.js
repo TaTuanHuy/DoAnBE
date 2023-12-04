@@ -103,7 +103,7 @@ const UpdateUser = async (req, res) => {
             return res.status(400).json(
                 {
                     status: 400,
-                    message: "Your Email is not correct" 
+                    message: "Bạn đã nhập sai Email! Vui lòng thử lại!" 
                 }
             );
         }
