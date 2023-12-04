@@ -42,9 +42,13 @@ const createUser = async (req, res) => {
 const SignIn = async (req, res) => {
     try {
         const getUser = await User.findOne({ email: req.body.email });
-
         if (!getUser) {
-            return res.status(400).json({ message: "email not found" });
+            return res.status(400).json(
+                {
+                    status: 400,
+                    message: "email not found" 
+                }
+            );
         }
 
         const checkPassword = await bcrypt.compare(req.body.password, getUser.password);
@@ -74,8 +78,29 @@ const SignIn = async (req, res) => {
 
 const UpdateUser = async (req, res) => {
     try {
+        const {name ,email, phoneNumber} = req.body
+
+        var re = /\S+@\S+\.\S+/;
+        let isEmail = re.test(email);
+        if (!isEmail) {
+            return res.status(400).json(
+                {
+                    status: 400,
+                    message: "Your Email is not correct" 
+                }
+            );
+        }
+        const checkExistUser = await User.findOne({ email });
+        console.log('test: ', checkExistUser)
+        if(checkExistUser){
+            return res.status(400).json({
+                status: 400,
+                message: 'Email đã tồn tại! Vui lòng thử lại!' 
+            });
+        }
+
         const getUser = await User.updateOne({ _id: req.params.id }, req.body);
-        return res.status(200).json({ message: "succesfull", getUser });
+        return res.status(200).json({ message: "Thay đổi thành công! Vui lòng kiểm tra lại thông tin", getUser });
     } catch (error) {
         return res.status(400).json({ message: error });
     }
