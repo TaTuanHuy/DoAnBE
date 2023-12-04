@@ -108,7 +108,6 @@ const UpdateUser = async (req, res) => {
             );
         }
         const checkExistUser = await User.findOne({ email });
-        console.log('test: ', checkExistUser)
         if(checkExistUser){
             return res.status(400).json({
                 status: 400,
