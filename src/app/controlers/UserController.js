@@ -96,25 +96,25 @@ const SignIn = async (req, res) => {
 const UpdateUser = async (req, res) => {
     try {
         const {name ,email, phoneNumber} = req.body
-
-        var re = /\S+@\S+\.\S+/;
-        let isEmail = re.test(email);
-        if (!isEmail) {
-            return res.status(400).json(
-                {
+        if(email){
+            var re = /\S+@\S+\.\S+/;
+            let isEmail = re.test(email);
+            if (!isEmail) {
+                return res.status(400).json(
+                    {
+                        status: 400,
+                        message: "Bạn đã nhập sai Email! Vui lòng thử lại!" 
+                    }
+                );
+            }
+            const checkExistUser = await User.findOne({ email });
+            if(checkExistUser){
+                return res.status(400).json({
                     status: 400,
-                    message: "Bạn đã nhập sai Email! Vui lòng thử lại!" 
-                }
-            );
+                    message: 'Email đã tồn tại! Vui lòng thử lại!' 
+                });
+            }
         }
-        const checkExistUser = await User.findOne({ email });
-        if(checkExistUser){
-            return res.status(400).json({
-                status: 400,
-                message: 'Email đã tồn tại! Vui lòng thử lại!' 
-            });
-        }
-
         const getUser = await User.updateOne({ _id: req.params.id }, req.body);
         return res.status(200).json({ message: "Thay đổi thành công! Vui lòng kiểm tra lại thông tin", getUser });
     } catch (error) {
