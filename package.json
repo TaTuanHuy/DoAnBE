@@ -12,7 +12,7 @@
     "new",
     "blog"
   ],
-  "author": "duong nam",
+  "author": "tuan huy",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.1",
